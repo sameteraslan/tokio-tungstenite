@@ -8,7 +8,7 @@
 //! Each WebSocket stream implements the required `Stream` and `Sink` traits,
 //! so the socket is just a stream of messages coming in and going out.
 
-#![deny(missing_docs, unused_must_use, unused_mut, unused_imports, unused_import_braces)]
+#![deny(unused_must_use, unused_mut, unused_imports, unused_import_braces)]
 
 pub use tungstenite;
 
@@ -55,7 +55,7 @@ pub use tls::Connector;
 pub use tls::{client_async_tls, client_async_tls_with_config};
 
 #[cfg(feature = "connect")]
-pub use connect::{connect_async, connect_async_with_config};
+pub use connect::{connect_async, bt_connect_async, connect_async_with_config};
 
 #[cfg(all(any(feature = "native-tls", feature = "__rustls-tls"), feature = "connect"))]
 pub use connect::connect_async_tls_with_config;
