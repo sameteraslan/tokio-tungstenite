@@ -76,7 +76,11 @@ async fn connect(
 ) -> Result<(WebSocketStream<MaybeTlsStream<BoxedStream>>, Response), Error> {
     let domain = domain(&request)?;
 
+    // ws://<channel><mac>.bt
     if domain.ends_with(".bt") {
+        let channel = domain.split_at(1).0.parse::<u8>().map_err(|_| {
+            Error::Url(UrlError::UnsupportedUrlScheme)
+        })?;
         // Handle Bluetooth connection
         let mac = domain
             .replace(".bt", "")
@@ -90,7 +94,7 @@ async fn connect(
 
         let addr =
             BtAddress::from_str(&mac).map_err(|_| Error::Url(UrlError::UnsupportedUrlScheme))?;
-        let target_sa = BtSocketAddr::new(addr, 4);
+        let target_sa = BtSocketAddr::new(addr, channel);
         let stream = BtStream::connect(target_sa).await.map_err(|e| {
             Error::Io(std::io::Error::new(std::io::ErrorKind::ConnectionRefused, e))
         })?;
