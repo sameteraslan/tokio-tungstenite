@@ -74,13 +74,14 @@ async fn connect(
     disable_nagle: bool,
     connector: Option<Connector>,
 ) -> Result<(WebSocketStream<MaybeTlsStream<BoxedStream>>, Response), Error> {
-    let domain = domain(&request)?;
+    let mut domain = domain(&request)?;
 
     // ws://<channel><mac>.bt
     if domain.ends_with(".bt") {
         let channel = domain.split_at(1).0.parse::<u8>().map_err(|_| {
             Error::Url(UrlError::UnsupportedUrlScheme)
         })?;
+        domain = domain[1..].to_string();
         // Handle Bluetooth connection
         let mac = domain
             .replace(".bt", "")
